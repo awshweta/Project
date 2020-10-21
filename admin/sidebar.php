@@ -46,11 +46,11 @@
                 </li>
 
                 <li>
-					<a href="#" class="nav-top-item">
+					<a class="nav-top-item">
 						Orders
 					</a>
 					<ul>
-						<li><a href="#">Manage Orders</a></li>
+						<li><a href="orders.php">Manage Orders</a></li>
 					</ul>
 				</li>
 				

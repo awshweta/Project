@@ -15,7 +15,7 @@ include('midtop.php');?>
 								$tags=$_POST['tags'];
 								$sql="INSERT INTO tags(`name`) VALUES('$tags')";
 								if ($conn->query($sql) === true) {
-									echo "<div id='success'>User account created successfully</div>";
+									//echo "<div id='success'>User account created successfully</div>";
 								} else {
 									$error[] = array('input' => 'form' , 'msg' => $conn->error);
 								}
@@ -27,7 +27,7 @@ include('midtop.php');?>
 
 								<p>
 									<label>Tags</label>
-									<input type="text" name="tags" value="" />
+									<input type="text" name="tags" value="" Required />
 								<p>
 									<input class="button" name ="submit" type="submit" value="Submit" />
 								</p>

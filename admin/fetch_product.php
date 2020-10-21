@@ -21,12 +21,21 @@
             if (sizeof($error) == 0) {
                 $id= $_POST['id'];
                 // echo var_dump($id);
-                $sqldelete = "DELETE FROM products WHERE id = $id";
+                $sqldelete = "DELETE FROM colors WHERE product_id = $id";
                 if ($conn->query($sqldelete) === true) {
-                   // echo "<div id='success'>Product deleted successfully</div>";
-                } else {
-                    $error[]=array('input'=>'form','msg'=>'Error deleting record: ' .$conn->error.'');
-                }   
+                    $sqldelete = "DELETE FROM tags_products WHERE product_id = $id";
+                    if ($conn->query($sqldelete) === true) {
+                        $sqlpdelete = "DELETE FROM products WHERE id = $id";
+                        if ($conn->query($sqlpdelete) === true) {
+                            // echo "<div id='success'>Product deleted successfully</div>";
+                        } else {
+                            $error[]=array('input'=>'form','msg'=>'Error deleting record: ' .$conn->error.'');
+                        }
+                        // echo "<div id='success'>tag deleted successfully</div>";
+                    } else {
+                        $error[]=array('input'=>'form','msg'=>'Error deleting record: ' .$conn->error.'');
+                    }
+                }
             }
         }
         

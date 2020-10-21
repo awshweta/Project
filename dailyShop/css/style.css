@@ -1869,13 +1869,13 @@ img {
   width: 30px;
 }
 #aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-red {
-  background-color: #FF0000;
+  background-color: #8B0000;
 }
 #aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-green {
   background-color: #008000;
 }
 #aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-yellow {
-  background-color: #FFFF00;
+  background-color: #FFC315;
 }
 #aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-pink {
   background-color: #FFC0CB;
@@ -1890,6 +1890,9 @@ img {
   background-color: #ffa500;
 }
 #aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-gray {
+  background-color: #808080;
+}
+#aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-lightgray {
   background-color: #bebebe;
 }
 #aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-black {

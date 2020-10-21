@@ -10,8 +10,7 @@ include('midtop.php'); ?>
 					
 					<div class="tab-content" id="tab2">
 					<?php if(isset($_POST['submit'])){
-								include('config.php');
-								$category=$_POST['category'];
+								$category=isset($_POST['category']) ? $_POST['category'] :'';
 								$sql="INSERT INTO categories(`name`) VALUES('$category')";
 								if ($conn->query($sql) === true) {
 									//echo "<div id='success'>User account created successfully</div>";
@@ -26,7 +25,7 @@ include('midtop.php'); ?>
 
 								<p>
 									<label>Category Name</label>              
-									<input type='text' name="category" >
+									<input type='text' name="category" Required>
 								</p>
 
 								<p>

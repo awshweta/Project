@@ -19,7 +19,12 @@ include('midtop.php'); ?>
 							$pName = isset($_POST['name']) ? $_POST['name']:'';
 							$pPrice = isset($_POST['price']) ? $_POST['price']:'';
 							$pQty = isset($_POST['quantity']) ? $_POST['quantity']:'';
+							$color = isset($_POST['color']) ? $_POST['color'] : '' ;
 							$pcategory = $_POST['category'];
+
+							$tag ="'".implode("' OR `name` = '", $_POST['tags'])."'";
+							
+							
 							$pdescription = isset($_POST['description']) ? $_POST['description']:'';
 							$image = $_FILES['image']['name'];
 							$target = "images/".basename($image);
@@ -27,8 +32,8 @@ include('midtop.php'); ?>
 							$sqlcategory = "SELECT id  FROM categories WHERE name = '$pcategory'";
 							$resultcategory = $conn->query($sqlcategory);
 							if ($resultcategory->num_rows > 0) {
-								while ($row = $resultcategory->fetch_assoc()) {
-									$cid = $row['id'];
+								while ($rowcat = $resultcategory->fetch_assoc()) {
+									$cid = $rowcat['id'];
 									//echo $cid;
 									if (sizeof($error) == 0) {
 										$sql = "SELECT *  FROM products";
@@ -40,69 +45,112 @@ include('midtop.php'); ?>
 												}
 											}
 										}
+
 										if ($r == true) {
 											$error[] = array('input' => 'form','msg' => 'Duplicate product not allowed');
 										} else {
 											 $sql = "INSERT INTO products (`name`, `price`,`quantity`, `description`,`category_id`, `image`) VALUES ('$pName', '$pPrice','$pQty','$pdescription',$cid, '$image')";
 											move_uploaded_file($_FILES['image']['tmp_name'], $target);
-									
+
 											if ($conn->query($sql) === true) {
-											//	echo "<div id='success'>Product added successfully</div>";
-											} else {
+
+												$sqlp = "SELECT *  FROM products ORDER BY `id` DESC LIMIT 1";
+												$resultp = $conn->query($sqlp);
+												if ($resultp->num_rows > 0) {
+													while ($rowp = $resultp->fetch_assoc()) {
+														 $id = $rowp['id'];
+														 $sqlcolor ="INSERT INTO colors (`product_id`,`color`,`quantity`) VALUES ('$id','$color','$pQty') ";
+														if ($conn->query($sqlcolor) === true) {
+															//echo "<div id='success'>color added successfully</div>";
+														}
+
+													}
+												}
+
+												$sqlt = "SELECT *  FROM tags WHERE `name` = $tag " ;
+												$resultt = $conn->query($sqlt);
+												if ($resultt->num_rows > 0) {
+													while ($rowt = $resultt->fetch_assoc()) {
+														$tagid = $rowt['id']; 
+														$sqlp = "SELECT *  FROM products ORDER BY `id` DESC LIMIT 1";
+														$resultp = $conn->query($sqlp);
+														if ($resultp->num_rows > 0) {
+															while ($rowp = $resultp->fetch_assoc()) {
+																 $id = $rowp['id'];
+																 $sqltagp ="INSERT INTO tags_products (`product_id`,`tag_id`) VALUES ('$id','$tagid') ";
+																if ($conn->query($sqltagp) === true) {
+																	//echo "<div id='success'>Tag added successfully</div>";
+																}
+
+															}
+														}
+														
+													}
+												}
 												
-											}
+												//	echo "<div id='success'>Product added successfully</div>";
+												} else {
+													echo $conn->error;	
+												}
+								
                                 		}
                             		}
 								}
                             }
-                            echo $conn->error;
 						}?>
 					<form action='' method="post" enctype="multipart/form-data">
 						
 						<fieldset> <!-- Set class to "column-left" or "column-right" on fieldsets to divide the form into columns -->
 						<p>
 								<label>Name</label>
-								<input class="text-input small-input" type="text" id="small-input" name="name" />  <!-- Classes for input-notification: success, error, information, attention -->
+								<input class="text-input small-input" type="text" id="small-input" name="name" Required/>  <!-- Classes for input-notification: success, error, information, attention -->
 							</p>
 							
 							<p>
 								<label>Price</label>
-								<input class="text-input medium-input datepicker" type="text" id="medium-input"  name="price" /> 
+								<input class="text-input medium-input datepicker" type="text" id="medium-input"  name="price" Required /> 
 							</p>
 
 							<p>
 								<label>Quantity</label>
-								<input class="text-input medium-input datepicker" type="text"  name="quantity" /> 
+								<input class="text-input medium-input datepicker" type="text"  name="quantity" Required /> 
+							</p>
+							<p>
+								<label>Color</label>
+								<input class="text-input medium-input datepicker" type="color"  name="color" /> 
 							</p>
 							
 							<p>
 								<label>Image</label>
-								<input class="text-input large-input" type="file" id="large-input"  name="image" />
+								<input class="text-input large-input" type="file" id="large-input"  name="image" Required />
 							</p>
 							<p>
 								<label>Categories</label>              
 								<select name="category" class="small-input">
-									<option value="Men">Men</option>
-									<option value="Women">Women</option>
-									<option value="Kids">Kids</option>
-									<option value="Electronics">Electronics</option>
-									<option value="Sports">Sports</option>
+									<?php $sql = "SELECT *  FROM categories";
+									$result = $conn->query($sql);
+									if ($result->num_rows > 0) {
+										while ($row = $result->fetch_assoc()) {?>
+											<option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+										<?php }
+									}?>
 								</select> 
 							</p>
 
 							<p>
 								<label>Tags</label>
-								<input type="checkbox" name="tags[]" value="fashion" /> Fashion 
-								<input type="checkbox" name="tags[]" value="ecommerce" /> Ecommerce
-								<input type="checkbox" name="tags[]" value="shop" /> Shop
-								<input type="checkbox" name="tags[]" value="handbag" /> Hand Bag
-								<input type="checkbox" name="tags[]" value="laptop" /> Laptop
-								<input type="checkbox" name="tags[]" value="headphone" /> Headphone
+								<?php $sql = "SELECT *  FROM tags";
+									$result = $conn->query($sql);
+									if ($result->num_rows > 0) {
+										while ($row = $result->fetch_assoc()) {?>
+											<input type="checkbox" name="tags[]" value="<?php echo ucfirst($row['name']); ?>"><?php echo ucfirst($row['name']); ?>
+										<?php }
+									}?>
 							</p>
 							
 							<p>
 								<label>Description</label>
-								<textarea class="text-input textarea wysiwyg" id="textarea" name="description" cols="79" rows="15"></textarea>
+								<textarea class="text-input textarea wysiwyg" id="textarea" name="description" cols="79" rows="15" Required></textarea>
 							</p>
 							
 							<p>
